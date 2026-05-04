@@ -1,0 +1,1 @@
+pip install fastapi uvicorn google-genai psycopg2-binary python-dotenv

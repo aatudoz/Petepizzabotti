@@ -1,5 +1,6 @@
 package ui
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,10 +13,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,34 +31,45 @@ fun ChatScreen(
 
     val lazyListState = rememberLazyListState()
 
-    // Vierittää chatin listan alas kun uusi viesti tulee
     LaunchedEffect(viewModel.viestit.size) {
         if (viewModel.viestit.isNotEmpty()) {
             lazyListState.animateScrollToItem(viewModel.viestit.size - 1)
         }
     }
 
-    // Yläosa TODO: joku online pallo Peten nimen vieree
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text("Pizzeria Pete", fontWeight = FontWeight.Bold)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
                         Text(
-                            "Pete paikalla ",
-                            style = MaterialTheme.typography.bodySmall
+                            "Pizzeria Pete",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Text(
+                            "Paikalla 🟢",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.alpha(0.7f)
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = onAvaaTilaukset) {
-                        Text("📋", color = Color.White)
+                        Text(
+                            text = "📋",
+                            style = MaterialTheme.typography.titleMedium
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF8B0000),
-                    titleContentColor = Color.White
+                    titleContentColor = Color.White,
+                    actionIconContentColor = Color.White
                 )
             )
         },
@@ -66,6 +82,7 @@ fun ChatScreen(
             )
         }
     ) { padding ->
+
         LazyColumn(
             state = lazyListState,
             modifier = Modifier
@@ -83,9 +100,9 @@ fun ChatScreen(
             if (viewModel.ladataan) {
                 item {
                     Text(
-                        "Pete miettii... tai sitten ei..",
+                        "Pete miettii...",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }
@@ -96,12 +113,25 @@ fun ChatScreen(
 
 @Composable
 fun ViestiKupla(viesti: ChatViesti) {
-    val taustavari = if (viesti.onKayttajalta) Color(0xFF8B0000) else Color.White
-    val tekstinVari = if (viesti.onKayttajalta) Color.White else Color.Black
-    val asettelu = if (viesti.onKayttajalta) Alignment.End else Alignment.Start
+
+    val isUser = viesti.onKayttajalta
+
+    val taustavari = if (isUser)
+        Color(0xFFB00020)
+    else
+        MaterialTheme.colorScheme.surfaceVariant
+
+    val tekstinVari = if (isUser)
+        Color.White
+    else
+        MaterialTheme.colorScheme.onSurface
+
+    val asettelu = if (isUser) Alignment.End else Alignment.Start
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(),
         horizontalAlignment = asettelu
     ) {
         Surface(
@@ -113,7 +143,7 @@ fun ViestiKupla(viesti: ChatViesti) {
             Text(
                 text = viesti.teksti,
                 color = tekstinVari,
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
+                modifier = Modifier.padding(10.dp)
             )
         }
     }
@@ -127,22 +157,34 @@ fun ChatSyoteRivi(
     onTekstiMuuttui: (String) -> Unit,
     onLaheta: () -> Unit
 ) {
-    Surface(shadowElevation = 8.dp) {
+    Surface(
+        shadowElevation = 8.dp,
+        modifier = Modifier
+            .navigationBarsPadding()
+            .imePadding()
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             OutlinedTextField(
                 value = teksti,
                 onValueChange = onTekstiMuuttui,
                 placeholder = { Text("Kirjoita Petelle...") },
                 modifier = Modifier.weight(1f),
                 enabled = !ladataan,
-                maxLines = 3
+                maxLines = 3,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(
+                    onSend = { onLaheta() }
+                )
             )
+
             Spacer(Modifier.width(8.dp))
+
             FilledIconButton(
                 onClick = onLaheta,
                 enabled = !ladataan && teksti.isNotBlank(),
@@ -150,7 +192,10 @@ fun ChatSyoteRivi(
                     containerColor = Color(0xFF8B0000)
                 )
             ) {
-                Icon(Icons.Default.Send, contentDescription = "Lähetä")
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Lähetä"
+                )
             }
         }
     }

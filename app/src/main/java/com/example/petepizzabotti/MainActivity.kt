@@ -14,6 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.petepizzabotti.ui.theme.PetepizzabottiTheme
 import retrofit2.Retrofit
 import ui.ChatScreen
+import ui.TilauksetScreen
+import androidx.compose.runtime.*
 
 
 class MainActivity : ComponentActivity() {
@@ -22,11 +24,25 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PetepizzabottiTheme {
-                    ChatScreen()
+                PaaNakyma()
                 }
             }
         }
     }
+
+@Composable
+fun PaaNakyma() {
+    var nakyma by remember { mutableStateOf("chat") }
+
+    when (nakyma) {
+        "chat" -> ChatScreen(
+            onAvaaTilaukset = { nakyma = "tilaukset" }
+        )
+        "tilaukset" -> TilauksetScreen(
+            onTakaisin = { nakyma = "chat" }
+        )
+    }
+}
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -43,3 +59,4 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+

@@ -19,7 +19,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
+fun ChatScreen(
+    viewModel: ChatViewModel = viewModel(),
+    onAvaaTilaukset: () -> Unit
+) {
 
     val lazyListState = rememberLazyListState()
 
@@ -41,6 +44,11 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                             "Pete paikalla ",
                             style = MaterialTheme.typography.bodySmall
                         )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onAvaaTilaukset) {
+                        Text("📋", color = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -75,7 +83,7 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
             if (viewModel.ladataan) {
                 item {
                     Text(
-                        "Luigi miettii... tai sitten ei..",
+                        "Pete miettii... tai sitten ei..",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray,
                         modifier = Modifier.padding(start = 8.dp)
@@ -129,7 +137,7 @@ fun ChatSyoteRivi(
             OutlinedTextField(
                 value = teksti,
                 onValueChange = onTekstiMuuttui,
-                placeholder = { Text("Kirjoita Luigille...") },
+                placeholder = { Text("Kirjoita Petelle...") },
                 modifier = Modifier.weight(1f),
                 enabled = !ladataan,
                 maxLines = 3

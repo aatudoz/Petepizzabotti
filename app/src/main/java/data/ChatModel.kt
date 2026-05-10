@@ -25,3 +25,16 @@ data class TilausValmis(
     val lisatilaukset: String?,
     val hinta: String?
 )
+
+data class Tilaus(
+    val id: Int,
+    val tuote: String?,
+    val koko: String?,
+    val lisatilaukset: String?,
+    val hinta: String?,
+    val nimi: String?,
+    @SerializedName("alkuperainen_viesti")
+    val alkuperainenViesti: String?,
+    @SerializedName("luotu_at")
+    val luotuAt: String?
+)

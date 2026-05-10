@@ -8,14 +8,14 @@ load_dotenv()
 def hae_yhteys():
     return psycopg2.connect(os.getenv("DATABASE_URL"))
 
-def tallenna_tilaus(tuote, koko, lisatilaukset, hinta, alkuperainen_viesti):
+def tallenna_tilaus(tuote, koko, lisatilaukset, hinta, alkuperainen_viesti, nimi):
     yhteys = hae_yhteys()
     kursori = yhteys.cursor()
     kursori.execute("""
-        INSERT INTO tilaukset (tuote, koko, lisatilaukset, hinta, alkuperainen_viesti)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO tilaukset (tuote, koko, lisatilaukset, hinta, alkuperainen_viesti, nimi)
+        VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING id
-    """, (tuote, koko, lisatilaukset, hinta, alkuperainen_viesti))
+    """, (tuote, koko, lisatilaukset, hinta, alkuperainen_viesti, nimi))
     tilaus_id = kursori.fetchone()[0]
     yhteys.commit()
     kursori.close()

@@ -11,7 +11,7 @@ data class ChatPyynto(
 
 // Mitä backend palauttaa
 data class ChatVastaus(
-    val viesti: String,
+    val viestit: List<String>,
     @SerializedName("tilaus_valmis")
     val tilausValmis: TilausValmis? = null,
     @SerializedName("tallennettu_id")

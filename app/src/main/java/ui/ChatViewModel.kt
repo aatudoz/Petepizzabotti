@@ -71,10 +71,15 @@ class ChatViewModel : ViewModel() {
                 val vastaus = RetrofitClient.api.lahetaViesti(
                     ChatPyynto(teksti = kayttajanViesti)
                 )
-                viestit.add(ChatViesti(vastaus.viesti, onKayttajalta = false))
 
-                // Jos Pete vahvistaa tilauksen, pieni ilmoitus (en tiiä toimiiko)
+                // Lisää Peten viestit yksitellen pienellä viiveellä
+                for ((index, viesti) in vastaus.viestit.withIndex()) {
+                    if (index > 0) delay(700) // 0.7s tauko viestien välissä
+                    viestit.add(ChatViesti(viesti, onKayttajalta = false))
+                }
+
                 if (vastaus.tallennettuId != null) {
+                    delay(500)
                     viestit.add(
                         ChatViesti(
                             teksti = "✅ Tilaus #${vastaus.tallennettuId} tallennettu",
@@ -83,12 +88,7 @@ class ChatViewModel : ViewModel() {
                     )
                 }
             } catch (e: Exception) {
-                viestit.add(
-                    ChatViesti(
-                        teksti = "Virhe: ${e.message ?: "tuntematon"}",
-                        onKayttajalta = false
-                    )
-                )
+                viestit.add(ChatViesti("Virhe: ${e.message ?: "tuntematon"}", onKayttajalta = false))
             } finally {
                 ladataan = false
             }

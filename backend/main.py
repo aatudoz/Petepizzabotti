@@ -28,6 +28,17 @@ MENU:
 - Quattro Formaggi 13€ (gluteeniton: ei)
 - Hawaii 11€ (gluteeniton: ei)
 
+GLUTEENITTOMAT:
+- GF Margherita 12€ (gluteeniton: kyllä)
+- GF Pepperoni 14€ (gluteeniton: kyllä)
+- GF Kebab 15€ (gluteeniton: kyllä)
+- GF Vege 13€ (gluteeniton: kyllä)
+
+KOOT:
+- S = -2€
+- M = perushinta
+- L = +3€
+
 KOOT:
 - S = -2€
 - M = perushinta
@@ -47,6 +58,9 @@ Asiakas voi kysyä:
 Jos asiakas kysyy näitä:
 - listaa vain sopivat tuotteet
 - jos ei ole sopivia, sano se suoraan
+
+Jos asiakas kysyy gluteenittomia tuotteita,
+listaa GLUTEENITTOMAT-osion tuotteet.
 
 ---
 
